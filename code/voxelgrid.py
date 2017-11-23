@@ -8,51 +8,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 from IPython.display import IFrame
 from IPython.display import display 
- 
+import pdb 
 
 # from utils import plot_voxelgrid
 
-
-
-def plot_voxelgrid(v_grid, cmap="Oranges", axis=False):
-
-    scaled_shape = v_grid.shape / np.min(v_grid.shape)
-
-    # coordinates returned from argwhere are inversed so use [:, ::-1]
-    points = np.argwhere(v_grid.vector)[:, ::-1] * scaled_shape
-
-    s_m = plt.cm.ScalarMappable(cmap=cmap)
-    rgb = s_m.to_rgba(v_grid.vector.reshape(-1)[v_grid.vector.reshape(-1) > 0])[:,:-1]
-
-    camera_position = points.max(0) + abs(points.max(0))
-    look = points.mean(0)
-    
-    if axis:
-        axis_size = points.ptp() * 1.5
-    else:
-        axis_size = 0
-
-    with open("plotVG.html", "w") as html:
-        html.write(TEMPLATE_VG.format( 
-            camera_x=camera_position[0],
-            camera_y=camera_position[1],
-            camera_z=camera_position[2],
-            look_x=look[0],
-            look_y=look[1],
-            look_z=look[2],
-            X=points[:,0].tolist(),
-            Y=points[:,1].tolist(),
-            Z=points[:,2].tolist(),
-            R=rgb[:,0].tolist(),
-            G=rgb[:,1].tolist(),
-            B=rgb[:,2].tolist(),
-            S_x=scaled_shape[0],
-            S_y=scaled_shape[2],
-            S_z=scaled_shape[1],
-            n_voxels=sum(v_grid.vector.reshape(-1) > 0),
-            axis_size=axis_size))
-
-    return IFrame("plotVG.html",width=800, height=800)
 
 
 
@@ -80,8 +39,10 @@ class VoxelGrid(object):
                 If False:
                     The bounding box is allowed to have dimensions of different sizes.
         """
+        print('==> Voxelization...')
+        # pdb.set_trace()
         self.points = points
-
+        # Max, min coordinate values 3 axies => (3, )
         xyzmin = np.min(points, axis=0) - 0.001
         xyzmax = np.max(points, axis=0) + 0.001
 
