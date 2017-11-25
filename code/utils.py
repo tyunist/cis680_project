@@ -314,13 +314,15 @@ def plot_points(xyz, colors=None, size=0.1, axis=False):
 
 
 def plot_voxelgrid(v_grid, cmap="Oranges", axis=False):
-
-    scaled_shape = v_grid.shape / np.min(v_grid.shape)
+    pdb.set_trace()
+    scaled_shape = v_grid.shape / np.min(v_grid.shape) # shape: step size in discretization 
 
     # coordinates returned from argwhere are inversed so use [:, ::-1]
+    # Equivalent to np.transpose(x, [2, 1, 0]) 
     points = np.argwhere(v_grid.vector)[:, ::-1] * scaled_shape
 
     s_m = plt.cm.ScalarMappable(cmap=cmap)
+    # [:, :-1]: get rid of the last dimension. i. e (2 x 3 x 4 x 5) => (2 x 3 x 4)
     rgb = s_m.to_rgba(v_grid.vector.reshape(-1)[v_grid.vector.reshape(-1) > 0])[:,:-1]
 
     camera_position = points.max(0) + abs(points.max(0))

@@ -70,6 +70,7 @@ class VoxelGrid(object):
 
         self.shape = shape
 
+        # Total number of (discrete) voxels: 
         self.n_voxels = x_y_z[0] * x_y_z[1] * x_y_z[2]
         self.n_x = x_y_z[0]
         self.n_y = x_y_z[1]
@@ -82,21 +83,28 @@ class VoxelGrid(object):
 
 
     def build(self):
-
+        # Ray casting algorithm ? 
         structure = np.zeros((len(self.points), 4), dtype=int)
-
-        structure[:,0] = np.searchsorted(self.segments[0], self.points[:,0]) - 1
+        # insert points coordinate values into corresponding segments. A segment is evenly-divided range of 
+        # indices. i. e 
+        # >>> np.searchsorted([1,2,3,4,5], [-10, 10, 2, 3])
+        # array([0, 5, 1, 2]) 
+        structure[:,0] = np.searchsorted(self.segments[0], self.points[:,0]) - 1 # -1 since the given result from np.searchsorted in this case will always start from 1 (segments[0][0] is the min value of self.points[:,0])
 
         structure[:,1] = np.searchsorted(self.segments[1], self.points[:,1]) - 1
 
         structure[:,2] = np.searchsorted(self.segments[2], self.points[:,2]) - 1
-
+        # Flatten the (x, y, z) into 1-D indices 
         # i = ((y * n_x) + x) + (z * (n_x * n_y))
         structure[:,3] = ((structure[:,1] * self.n_x) + structure[:,0]) + (structure[:,2] * (self.n_x * self.n_y)) 
         
         self.structure = structure
 
         vector = np.zeros(self.n_voxels)
+        # np.bincount: Count number of occurrences of each value in array of non-negative ints.
+        # The number of bins (of size 1) is one larger than the largest value in x.
+        # >>> np.bincount(np.array([0, 1, 1, 3, 2, 1, 7]))
+        # array([1, 3, 1, 1, 0, 0, 0, 1])
         count = np.bincount(self.structure[:,3])
         vector[:len(count)] = count
 
@@ -104,7 +112,6 @@ class VoxelGrid(object):
 
  
     def plot(self, d=2, cmap="Oranges", axis=False):
-
         if d == 2:
 
             fig, axes= plt.subplots(int(np.ceil(self.n_z / 4)), 4, figsize=(8,8))
