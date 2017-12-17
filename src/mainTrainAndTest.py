@@ -71,5 +71,3 @@ def fasterRCNN(views, label, bs, reuse, ind_base):
 
       # max pooling within multiple views 
       feaMap = viewPooling(view_list, 'view pooling')
-   
-  processPlot(ind_base)
