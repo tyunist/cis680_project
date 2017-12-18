@@ -21,7 +21,7 @@ def maxPool(h, name):
   out = tf.nn.max_pool(h, ksize=[1, 2, 2, 1], 
     strides=[1, 2, 2, 1], padding='SAME', name=name)
 
-  print name, " | input shape: ", h.get_shape.as_list(), " | out shape: ", out.get_shape().as_list()
+  # print name, " | out shape: ", out.get_shape().as_list()
   return out
 
 
@@ -37,7 +37,7 @@ def varWeightDecay(var, wd_ration):
 '''
   The convolutional block: Conv + BN + Relu
 '''
-def ConvBlock(x, in_channels, out_channels, kernel_size, stride, is_train, reuse, wd=0.0, name):  
+def ConvBlock(x, in_channels, out_channels, kernel_size, stride, is_train, reuse, wd=0.0, name='Conv'):  
   with tf.variable_scope(name, reuse=reuse) as scope:
     W = tf.get_variable('weights', [kernel_size, kernel_size, in_channels, out_channels], 
       initializer = tf.truncated_normal_initializer(stddev=0.1))
@@ -54,14 +54,14 @@ def ConvBlock(x, in_channels, out_channels, kernel_size, stride, is_train, reuse
 
     out = tf.nn.relu(out)
 
-  print name, " | input shape: ", x.get_shape.as_list(), " | out shape: ", out.get_shape().as_list()
+  # print name, " | out shape: ", out.get_shape().as_list()
   return out
 
 
 '''
   The fully connected block: FC + BN + Relu
 '''
-def FcBlock(x, in_channels, out_channels, is_train, reuse, wd=0.0, name):
+def FcBlock(x, in_channels, out_channels, is_train, reuse, wd=0.0, name='FC'):
   with tf.variable_scope(name, reuse=reuse) as scope:
     W = tf.get_variable('weights', [in_channels, out_channels], 
       initializer = tf.truncated_normal_initializer(stddev=0.1))
@@ -77,14 +77,14 @@ def FcBlock(x, in_channels, out_channels, is_train, reuse, wd=0.0, name):
     
     out = tf.nn.relu(out)
 
-  print name, " | input shape: ", x.get_shape.as_list(), " | out shape: ", out.get_shape().as_list()
+  # print name, " | out shape: ", out.get_shape().as_list()
   return out
 
 
 '''
   Mobile net: contains depthwise and pointwise
 '''
-def MobileBloack(x, in_channels, out_channels, depth_kernel_size_h, depth_kernel_size_w, is_train, reuse, wd=0.0, name):
+def MobileBloack(x, in_channels, out_channels, depth_kernel_size_h, depth_kernel_size_w, is_train, reuse, wd=0.0, name='Mobile'):
   with tf.variable_scope(name, reuse=reuse) as scope:
     '''
       depthwise conv
@@ -115,14 +115,14 @@ def MobileBloack(x, in_channels, out_channels, depth_kernel_size_h, depth_kernel
     out = tf.contrib.layers.batch_norm(out, is_training=is_train, scale=True, fused=True, updates_collections=None)
     out = tf.nn.relu(out)
 
-  print name, " | input shape: ", x.get_shape.as_list(), " | out shape: ", out.get_shape().as_list()
+  # print name, " | out shape: ", out.get_shape().as_list()
   return out
 
 
 '''
   ResNet Block
 '''
-def ResBlock(x, in_channels, out_channels, weight1_size, weight2_size, identity_size, is_train, reuse, wd=0.0, name):
+def ResBlock(x, in_channels, out_channels, weight1_size, weight2_size, identity_size, is_train, reuse, wd=0.0, name='Res'):
   with tf.variable_scope(name, reuse=reuse) as scope:
     '''
       weight layers 
@@ -158,7 +158,9 @@ def ResBlock(x, in_channels, out_channels, weight1_size, weight2_size, identity_
     # combine the identity and weighted outputs, then nonlinearize it 
     out = tf.nn.relu(x_idty + x_w)
 
-  print name, " | input shape: ", x.get_shape.as_list(), " | out shape: ", out.get_shape().as_list()
+  # print name, " | out shape: ", out.get_shape().as_list()
   return out
+
+
 
 
